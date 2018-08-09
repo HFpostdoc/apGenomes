@@ -7,8 +7,11 @@ the first two paragraphs are still entirely devoted to climate change.
 Response: The motivation for the study was climate change and the
 ultimate goal is to predict responses of ants and ecosystems to
 climate change. I do see that we can not make hard conclusions about
-climate change because of the confoudned nature of the data. I will
-reduce the emphasis even more than I have.
+climate change because of the confoudned nature of the data. In
+response to the reviewers and edits from people in the group, I have
+edited to make the narrative clearer that these genomes and this paper
+are intended to serve as indicators of responses to environmental
+change, including the various impacts of climate change.
 
 L60 This shows genomes by country, not by climate zone or genera.
 
@@ -20,12 +23,20 @@ It would be better to move the genome /climate hypotheses up earlier
 to lay out the basis for your analyses rather than back-loading them
 after the objectives.
 
-Response: Move the hypotheses?
+Response: I've added some text to clarify variation among genomes
+rather than a comparison of genome variability, such as comparing the
+variance estimates. I haven't moved the hypotheses, as the reviewers
+specifically asked for a reduction in the emphasis of these
+hypotheses. So, I have left them in the final intro paragraph, and
+move succinctly through their development. As you'll see in a future
+response, I have moved some text from the discussion back to the intro
+that sets of the genome size hypothesis better. 
 
 L77 This is just about climate, no genomes included in here.  Yet the
 second sentence makes genomic predictions.  Unclear.
 
-???
+Response: I have added a bit more text here and a reference to the
+Geographic Mosaic Hypothesis.
 
 L81 The hypothesis is that patterns will exist?  That is very very
 vague.  Is there no literature on climate effects on either of these
@@ -36,11 +47,14 @@ Why?  This sounds like fishing for anything that comes out with no
 biological basis for any prediction.  Reviewer 1 specifically asked
 for background to justify these analyses.
 
-???
+Response: I have moved text from the discussion back to the intro to
+address this. There is now more literature developing this
+hypothesis. 
 
 L85 Doesn't this sentence confound phylogeny and climate?
 
-???
+Response: Yes, this is an acknowledgment of this. See my response
+below about MASH similarity and phylogenetics. 
 
 L153 Reviewer 3 critiques total bp length as a measure of genome size,
 and suggested something else (using GenomeScope) instead.  I see no
@@ -50,20 +64,29 @@ this measure?
 Response: The reviewer suggested using it because it "tends to be more
 accurate than assembly size". Other than that, the reviewer provided
 to justification, citations or otherwise. My approach in drafting my
-response to the reviewer is that 
+response to the reviewer is that: 
 
-Genome scope is intended for "unassembled short reads". 
-
-I looked at the correlations between genome size and flow cytometry at
-the generic level and found a relatively good correlation, but
-Dinoponera was a major outlier.
-
+Genome scope is intended for "unassembled short reads", and we are
+working with assembled genomes. Also, I have added text to the methods
+discussing both the use of genome size estimates (e.g. flow cytometry)
+as targets for assembly size, which should produce a correlation
+between true genome size and assembly size. As a way to examine this
+with the data in hand, I tested for a correlation between ant assembly
+size and flow cytometry estimates for ant genera that were present in
+both NCBI and the Tsutsui 2008 study. The correlation is relatively
+high r = 0.57 and marginally significant (p-value = 0.07), which
+suggests that such a relationship between genome size and assembly
+size exists for the ant genomes. 
 
 L158 The third reviewer critiqued your decision to use sampling
 location info instead of some sort of range-wide center or range for
 these species.  Can you defend the decision you have made?
 
-???
+Response: Yes, see my response to the reviewer. In short, I conducted
+both analyses, but eventually chose site location, as it is the best
+indicator of the genome of the sequence that is in hand. 
+
+??? Add to response letter.
 
 L161 MASH similarity is a proxy for phylogeny.  Why not use it to
 control for phylogeny and test effects on genome size in a
@@ -77,12 +100,28 @@ have added a bunch of highly phylogenetically correlated
 samples. Presenting a weak, uncontrolled analysis in order to have
 something significant to report is not really that helpful.
 
-???
+Response: I understand MASH as a whole genome distance metric, which
+can be used to construct phylogenys. Here, I've used it get a measure
+of similiarity among the ant genomes. This might be what you're saying
+here, and I would clarify that thinking of phylogeny as the history of
+the development of a genome means that all evloutionary forces have
+contributed here, including selective forces. I agree that we can't
+parse out climate responses from all of the other forces that may be
+resulting in similarities from species which are more related to each
+other. I see this primarily as a matter of being careful about
+interpretations drawn from the results as presented. I think that as I
+have responded to your comments, this is now clearer in the text. 
 
 L189 The third reviewer suggested looking only at Aphaenogaster.  I do
 not see that you have done so.
 
-???
+Response: I had done this, and the results were included in previous
+drafts; however, they were switched in favor of the current results in
+order to have more statistical power, which as a comment of a few
+people, but was definitely a comment from Nick who has significant
+stats experience. 
+
+??? Add to response letter.
 
 L210 You need to remove this stuff.  The reviewers did not buy it.
 
@@ -94,7 +133,6 @@ L212 This is a much more relevant frame.  You can speculate at the
 very end that understanding climate adaptation at the genomic level
 can provide insights for prospective changes under climate change, but
 that's a step farther removed from where you are now.
-
 
 
 L213 now you have returned to climate change, but you should be
