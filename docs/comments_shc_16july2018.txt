@@ -4,15 +4,15 @@ to do with climate change per se.  Climate adaptation, yes
 overall set of sequenced ant genomes.  But climate change, no.  Yet
 the first two paragraphs are still entirely devoted to climate change.
 
-The motivation for the study was climate change and the ultimate goal
-is to predict responses of ants and ecosystems to climate change. I do
-see that we can not make hard conclusions about climate change because
-of the confoudned nature of the data. I will reduce the emphasis even
-more than I have. 
+Response: The motivation for the study was climate change and the
+ultimate goal is to predict responses of ants and ecosystems to
+climate change. I do see that we can not make hard conclusions about
+climate change because of the confoudned nature of the data. I will
+reduce the emphasis even more than I have.
 
 L60 This shows genomes by country, not by climate zone or genera.
 
-Ah, yes, I moved the figure reference.
+Response: Ah, yes, I moved the figure reference.
 
 L75 The relationship is not about variation per se (ie the variation
 does not change across climates).  Particular characteristics might.
@@ -20,7 +20,7 @@ It would be better to move the genome /climate hypotheses up earlier
 to lay out the basis for your analyses rather than back-loading them
 after the objectives.
 
-Move the hypotheses?
+Response: Move the hypotheses?
 
 L77 This is just about climate, no genomes included in here.  Yet the
 second sentence makes genomic predictions.  Unclear.
@@ -47,7 +47,17 @@ and suggested something else (using GenomeScope) instead.  I see no
 evidence you have done this.  Can you defend your decision to retain
 this measure?
 
-???
+Response: The reviewer suggested using it because it "tends to be more
+accurate than assembly size". Other than that, the reviewer provided
+to justification, citations or otherwise. My approach in drafting my
+response to the reviewer is that 
+
+Genome scope is intended for "unassembled short reads". 
+
+I looked at the correlations between genome size and flow cytometry at
+the generic level and found a relatively good correlation, but
+Dinoponera was a major outlier.
+
 
 L158 The third reviewer critiqued your decision to use sampling
 location info instead of some sort of range-wide center or range for
@@ -76,14 +86,16 @@ not see that you have done so.
 
 L210 You need to remove this stuff.  The reviewers did not buy it.
 
-???
+Response: I have removed the final sentence and replaced it with a
+more reserved statement about the relevance of our findings to the
+hypotheses.
 
 L212 This is a much more relevant frame.  You can speculate at the
 very end that understanding climate adaptation at the genomic level
 can provide insights for prospective changes under climate change, but
 that's a step farther removed from where you are now.
 
-??? 
+
 
 L213 now you have returned to climate change, but you should be
 focusing on climate adaptation across ants.  What is known about
@@ -91,14 +103,30 @@ climate adaptation in ants in extreme environments?  Variation in
 freeze-tolerance?  What characteristics to the currently sequenced
 species possess, and how are Aphaenogaster different?
 
-???
+Response: I'll add the climate adapation language to the text, which
+I think will help to strengthen the narrative, and make it clear that
+although we are not studying climate change impacts, we are looking
+toward the potential impacts of climate change. 
+
 
 L216 It is not strong, because it is confounded.
 
-??? 
+Response: I changed the wording here from strong to largest to avoid
+the confusion between the observed statistics and the largest scale
+inference regarding the hypotheses, which is where the potential for
+confounded variables enters. I have tried throughout to describe the
+results in terms of the support or non-support for the
+hypotheses. My perspective here is that although we have not
+conducted a controlled study of these hypotheses, the information we
+have is not useless and can inform inference.
 
 L222 Oh - why was this not in the introduction?  This is what your
 reviewers were looking for - an a priori reason to expect genome size
 might change in a particular way in response to these variables.
 
-Move to intro?
+Response: This setup was in the intro, but two of the reviewers
+requested that the intro be reduced, especially setup and discussion
+of the biogeographic context (primarily Yannick's comment). I moved
+it, along with other text to the discussion in order to address
+this. I've moved it back to the intro and placed it with the setup for
+the size hypothesis.

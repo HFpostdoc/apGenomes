@@ -114,8 +114,16 @@ ant.gen.size <- tables[[1]]
 ant.gen.size <- ant.gen.size[!apply(ant.gen.size,1,function(x) any(grepl('MEAN',x))),]
 ant.gen.size <- ant.gen.size[ant.gen.size[,1] != '',]
 ant.gen.size[,'1C Genome Size (Mb)'] <- as.numeric(as.character(ant.gen.size[,'1C Genome Size (Mb)']))
-cyto.sizes <- as.character(tables[[1]][ , "1C Genome Size (Mb)"])
-cyto.sizes <- as.numeric(cyto.sizes[cyto.sizes != ""])
+
+### Flow cytomentry
+cyto.names <- as.character(tables[[1]][, "Species"])
+cyto.sizes <- as.character(tables[[1]][cyto.names != "" & !grepl("MEAN", cyto.names), 
+                                       "1C Genome Size (Mb)"])
+cyto.names <- cyto.names[cyto.names != "" & !grepl("MEAN", cyto.names)]
+cyto.sizes <- as.numeric(cyto.sizes)
+names(cyto.sizes) <- cyto.names
+
+
 
 ### Genome Size by Location
 ant.gs.world <- table(substr(ant.gen.size[,"Collection Info"],1,3))
@@ -149,6 +157,32 @@ ncbi.ant <- read.csv("../data/storage/apg/ncbi_ant.csv")
 colnames(ncbi.ant)[1] <- 'Organism'
 ## Parse the reference sizes
 ref.sizes <- c(as.numeric(ncbi.ant[,'Size..Mb.']),ant.gen.size[,'1C Genome Size (Mb)'])
+
+### Correlate cyto and assembly
+ncbi.size <- as.numeric(ncbi.ant[ , "Size..Mb."])
+names(ncbi.size) <- ncbi.ant[, "X.Organism.Name"]
+gs.ncbi <- ncbi.size[names(ncbi.size) %in% names(cyto.sizes)]
+gs.cyto <- cyto.sizes[names(cyto.sizes) %in% names(ncbi.size)]
+gs.ncbi <- gs.ncbi[order(names(gs.ncbi))]
+gs.cyto <- gs.cyto[order(names(gs.cyto))]
+cor.test(gs.ncbi, gs.cyto, "great", "p")
+plot(gs.ncbi, gs.cyto)
+
+ncbi.genera <- do.call(rbind,strsplit(names(ncbi.size), " "))[,1]
+cyto.genera <- unlist(lapply(strsplit(names(cyto.sizes), " "), function(x) x[1]))
+ncbi.gs <- tapply(ncbi.size, ncbi.genera, mean)
+cyto.avg <- tapply(cyto.sizes, cyto.genera, mean)
+cyto.gs <- cyto.avg[names(cyto.avg) %in% names(ncbi.gs)]
+ncbi.gs <- ncbi.gs[names(ncbi.gs) %in% names(cyto.avg)]
+
+cor.test(cyto.gs, ncbi.gs, "greater", "p")
+cor.test(cyto.gs[!grepl("Dinopon", names(cyto.gs))], 
+         ncbi.gs[!grepl("Dinopon", names(cyto.gs))], "greater", "p")
+
+gs.pd <- abs(cyto.gs[!grepl("Dinopon", names(cyto.gs))] - ncbi.gs[!grepl("Dinopon", names(cyto.gs))]) / ((cyto.gs[!grepl("Dinopon", names(cyto.gs))] + ncbi.gs[!grepl("Dinopon", names(cyto.gs))]) / 2) * 100
+
+gs.pd.dq <- abs(cyto.gs[grepl("Dinopon", names(cyto.gs))] - ncbi.gs[grepl("Dinopon", names(cyto.gs))]) / ((cyto.gs[grepl("Dinopon", names(cyto.gs))] + ncbi.gs[grepl("Dinopon", names(cyto.gs))]) / 2) * 100
+
 
 ## source("src/apg_mash.R")
 ### Analyze the mash distnaces
@@ -1474,6 +1508,30 @@ print(clim.cor.xtab,
 ### Climate heatmap
 pdf("../results/clim_cor.pdf")
 heatmap((cor(clim.df)), scale = "none", col = cm.colors(256)) 
+dev.off()
+
+### Flow cyto Assembly size correlation plot
+pdf("../results/cyto_assembly.pdf")
+plot(cyto.gs ~ ncbi.gs, 
+     pch = 19, 
+     xlab = "NCBI Genome Assembly Size (Mb)", 
+     ylab = "Flow Cytometry Genome Size(MB)", 
+     ylim = c(225, 555))
+abline(lm(cyto.gs ~ ncbi.gs))
+dev.off()
+
+pdf("../results/cyto_assembly_outlier.pdf")
+plot(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ 
+     ncbi.gs[!grepl("Dinopon", names(cyto.gs))], 
+     pch = 19, 
+     xlab = "NCBI Genome Assembly Size (Mb)", 
+     ylab = "Flow Cytometry Genome Size(MB)", 
+     ylim = c(225, 555))
+abline(lm(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ 
+     ncbi.gs[!grepl("Dinopon", names(cyto.gs))]))
+points(ncbi.gs[grepl("Dinopon", names(cyto.gs))], 
+       cyto.gs[grepl("Dinopon", names(cyto.gs))])
+abline(lm(cyto.gs ~ ncbi.gs), col = "grey", lty = 2)
 dev.off()
 
 ### Table: size ~ biogeo
