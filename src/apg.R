@@ -17,7 +17,7 @@ pkg.lib <- c("gdata", "prism", "ggplot2", "raster", "AntWeb", "geosphere",
              "rnoaa", "gdata", "prism", "ggplot2", "raster", "vegan", 
              "tidyr", "stringr", "prism", "raster", "XML", "RCurl",
              "rlist", "rentrez","xtable","broom","ecodist","tibble","igraph",
-             "sp", "ggmap",  "pvclust", "Rgraphviz")
+             "sp", "ggmap",  "pvclust", "Rgraphviz", "ape")
 
 missing.pkgs <- pkg.lib[!(pkg.lib %in% installed.packages()[,1])]
 
@@ -78,6 +78,26 @@ onlyAz <- function(x){
 # italic: format table entries as italic in xtable
 # https://cran.r-project.org/web/packages/xtable/vignettes/xtableGallery.pdf
 italic <- function(x){paste0('{\\emph{',x,'}}')}
+## convert a phylo to weighted matrix
+as.wmat <- function(x = "Phylo object"){
+    nv <- x$Nnode + length(x$tip.label)
+    out <- matrix(0, nv, nv)
+    for (i in 1:nrow(x$edge)){
+        out[x$edge[i,1], x$edge[i,2]] <- x$edge.length[i]
+    }
+    rownames(out) <- colnames(out) <- c(x$tip.label, paste0("node", 1:x$Nnode))
+    ig <- graph_from_adjacency_matrix(out, weighted = TRUE)
+    out <- matrix(0, length(x$tip.label), length(x$tip.label))
+    rownames(out) <- colnames(out) <- x$tip.label
+    for (i in 1:nrow(out)){
+        for (j in 1:ncol(out)){
+            out[i, j] <- shortest.paths(ig, 
+                                        rownames(out)[i], 
+                                        colnames(out)[j])[1, 1]
+        }
+    }
+    return(out)
+}
 ####################################################################################
 
 print("Loading data")
@@ -166,7 +186,6 @@ gs.cyto <- cyto.sizes[names(cyto.sizes) %in% names(ncbi.size)]
 gs.ncbi <- gs.ncbi[order(names(gs.ncbi))]
 gs.cyto <- gs.cyto[order(names(gs.cyto))]
 cor.test(gs.ncbi, gs.cyto, "great", "p")
-plot(gs.ncbi, gs.cyto)
 
 ncbi.genera <- do.call(rbind,strsplit(names(ncbi.size), " "))[,1]
 cyto.genera <- unlist(lapply(strsplit(names(cyto.sizes), " "), function(x) x[1]))
@@ -175,7 +194,7 @@ cyto.avg <- tapply(cyto.sizes, cyto.genera, mean)
 cyto.gs <- cyto.avg[names(cyto.avg) %in% names(ncbi.gs)]
 ncbi.gs <- ncbi.gs[names(ncbi.gs) %in% names(cyto.avg)]
 
-cor.test(cyto.gs, ncbi.gs, "greater", "p")
+cor.test(cyto.gs, ncbi.gs, "greater", "s")
 cor.test(cyto.gs[!grepl("Dinopon", names(cyto.gs))], 
          ncbi.gs[!grepl("Dinopon", names(cyto.gs))], "greater", "p")
 
@@ -1479,6 +1498,29 @@ dev.off()
 ### Linear regression Size ~ biogeo
 lm.all.size <- lm(size ~ lat + lon + MAT + Tmin + Tmax + PA + PS, data = data.frame(clim.df, all.sizegeo))
 
+### Phylogeny
+### Prune tips to match NCBI
+mor.phy <- read.nexus("../data/storage/apg/Moreau_et_al._2006_Data_Tree_with_BL.nex")
+all.lab <- do.call(rbind, strsplit(all.size[, "species"], " "))[,1]
+all.gs <- tapply(all.size[, "size"], all.lab, mean)
+all.gs <- all.gs[order(names(all.gs))]
+mor.tips <- gsub("_", " ", mor.phy$tip.label)
+mor.gen <- do.call(rbind, strsplit(mor.tips, " "))[,1]
+mor.prune <- drop.tip(mor.phy, which(!mor.gen %in% names(all.gs)))
+mor.d <- as.wmat(mor.prune)
+rownames(mor.d) <- colnames(mor.d) <- do.call(rbind, strsplit(rownames(mor.d), "_"))[,1]
+mor.d <- mor.d[order(rownames(mor.d)), order(rownames(mor.d))]
+all.gs.d <- dist(all.gs[names(all.gs) %in% rownames(mor.d)])
+mor.d <- mor.d / max(mor.d)
+mor.d <- as.dist(mor.d)
+gs.nodino <- as.dist(as.matrix(all.gs.d)[!grepl("Dino", rownames(as.matrix(mor.d))), 
+                                 !grepl("Dino", rownames(as.matrix(mor.d)))])
+mor.nodino <- as.dist(as.matrix(mor.d)[!grepl("Dino", rownames(as.matrix(mor.d))), 
+                                 !grepl("Dino", rownames(as.matrix(mor.d)))])
+mantel(gs.nodino ~ mor.nodino)
+
+mantel(all.gs.d ~ mor.d)
+plot(hclust(mor.d))
 
 ### Climate table
 clim.tab <- clim.df[grepl("Aphaenogaster", rownames(clim.df)), 

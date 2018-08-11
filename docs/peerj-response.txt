@@ -6,7 +6,7 @@ results. This was done primarily because of the intractability of the
 statistical separation of phylogenetic effects. As stated by all three
 reviewers, we have not removed these results, as they present an
 initial perspective that will be useful for readers. We have largely
-followed the comments of the Reviewer 2s. 
+followed the comments of Reviewer 2s. 
 
 R1
 

@@ -4,18 +4,18 @@ to do with climate change per se.  Climate adaptation, yes
 overall set of sequenced ant genomes.  But climate change, no.  Yet
 the first two paragraphs are still entirely devoted to climate change.
 
-Response: The motivation for the study was climate change and the
-ultimate goal is to predict responses of ants and ecosystems to
-climate change. I do see that we can not make hard conclusions about
-climate change because of the confoudned nature of the data. In
-response to the reviewers and edits from people in the group, I have
-edited to make the narrative clearer that these genomes and this paper
-are intended to serve as indicators of responses to environmental
-change, including the various impacts of climate change.
+Response: I do agree that we are not looking at responses to climate
+change, and I've shifted the narrative some more to make it clear that
+the motivation for the study was climate change. In response to the
+reviewers and edits from people in the group, I have edited to make
+the narrative clearer that these genomes and this paper will hopefully
+serve as useful for future research into the indicators of responses
+to environmental change, including the various impacts of climate
+change.
 
 L60 This shows genomes by country, not by climate zone or genera.
 
-Response: Ah, yes, I moved the figure reference.
+Response: Ah, yes, I moved the figure reference in that sentence.
 
 L75 The relationship is not about variation per se (ie the variation
 does not change across climates).  Particular characteristics might.
@@ -25,18 +25,21 @@ after the objectives.
 
 Response: I've added some text to clarify variation among genomes
 rather than a comparison of genome variability, such as comparing the
-variance estimates. I haven't moved the hypotheses, as the reviewers
+variance estimates. I hadn't moved the hypotheses, as the reviewers
 specifically asked for a reduction in the emphasis of these
-hypotheses. So, I have left them in the final intro paragraph, and
-move succinctly through their development. As you'll see in a future
-response, I have moved some text from the discussion back to the intro
-that sets of the genome size hypothesis better. 
+hypotheses. However, in response to your comments, I've done some
+re-arrangement to the hypothesis setup in the Intro, increasing the
+setup but in the context of why we should care about ant genomes. I
+think that the setup now moves more succinctly through the hypothesis
+setup. As you'll see in a future response, I've also moved some text
+from the discussion back to the intro that sets of the genome size
+hypothesis better.
 
 L77 This is just about climate, no genomes included in here.  Yet the
 second sentence makes genomic predictions.  Unclear.
 
 Response: I have added a bit more text here and a reference to the
-Geographic Mosaic Hypothesis.
+Jonathan N. Thompson's Geographic Mosaic Hypothesis.
 
 L81 The hypothesis is that patterns will exist?  That is very very
 vague.  Is there no literature on climate effects on either of these
@@ -48,8 +51,9 @@ biological basis for any prediction.  Reviewer 1 specifically asked
 for background to justify these analyses.
 
 Response: I have moved text from the discussion back to the intro to
-address this. There is now more literature developing this
-hypothesis. 
+address this. There is now more literature developing these
+hypothesis, which a subsequent comment of yours in the discussion also
+refers to.
 
 L85 Doesn't this sentence confound phylogeny and climate?
 
@@ -61,32 +65,31 @@ and suggested something else (using GenomeScope) instead.  I see no
 evidence you have done this.  Can you defend your decision to retain
 this measure?
 
-Response: The reviewer suggested using it because it "tends to be more
-accurate than assembly size". Other than that, the reviewer provided
-to justification, citations or otherwise. My approach in drafting my
-response to the reviewer is that: 
-
-Genome scope is intended for "unassembled short reads", and we are
-working with assembled genomes. Also, I have added text to the methods
-discussing both the use of genome size estimates (e.g. flow cytometry)
-as targets for assembly size, which should produce a correlation
-between true genome size and assembly size. As a way to examine this
-with the data in hand, I tested for a correlation between ant assembly
-size and flow cytometry estimates for ant genera that were present in
-both NCBI and the Tsutsui 2008 study. The correlation is relatively
-high r = 0.57 and marginally significant (p-value = 0.07), which
-suggests that such a relationship between genome size and assembly
-size exists for the ant genomes. 
+Response: I reviewed Genomescope and the paper for it states that it
+is intended for "unassembled short reads". We are working with
+assembled genomes, so this seems to actually be an inappropriate
+recommendation. Also, I have added text to the methods discussing both
+the use of genome size estimates (e.g. flow cytometry) as targets for
+assembly size, which should produce a correlation between true genome
+size and assembly size. As a way to examine this with the data in
+hand, I tested for a correlation between ant assembly size and flow
+cytometry estimates for ant genera that were present in both NCBI and
+the Tsutsui 2008 study. The correlation is relatively high r = 0.57
+and marginally significant (p-value = 0.07), which suggests that such
+a relationship between genome size and assembly size exists for the
+ant genomes.
 
 L158 The third reviewer critiqued your decision to use sampling
 location info instead of some sort of range-wide center or range for
 these species.  Can you defend the decision you have made?
 
-Response: Yes, see my response to the reviewer. In short, I conducted
-both analyses, but eventually chose site location, as it is the best
-indicator of the genome of the sequence that is in hand. 
-
-??? Add to response letter.
+Response: Yes, in short, I conducted both analyses, but eventually
+chose site location, as it is the best indicator of the genome of the
+sequence that is in hand. The use of center of range distributions for
+climate values introduces error from un-even sampling of taxa, and
+since we're looking across the entire globe, this is definitely a
+concern. I'm currently drafting the response letter to lay this out
+for the reviewers and editor. 
 
 L161 MASH similarity is a proxy for phylogeny.  Why not use it to
 control for phylogeny and test effects on genome size in a
@@ -109,8 +112,17 @@ contributed here, including selective forces. I agree that we can't
 parse out climate responses from all of the other forces that may be
 resulting in similarities from species which are more related to each
 other. I see this primarily as a matter of being careful about
-interpretations drawn from the results as presented. I think that as I
-have responded to your comments, this is now clearer in the text. 
+interpretations drawn from the results as presented, and I've added
+text to the discussion to address this. Also, I added text to the
+discussion about the issues with controlling for phylogeny with our
+ant genomes, including references stating that the most complete
+phylogeny is mainly resolved to the genus level and less than half of
+our genera are present in the phylogeny. I did run a correlation
+between the phylogeny from Moreau 2006 and the average genome size of
+ant genera and did not find a signficant correlation with genome size
+(Mantel R 0.01, p-value 0.37). However, I don't plan to put these
+results in the paper, as they're really not an appropriate way to
+acutally control for phylogeny.
 
 L189 The third reviewer suggested looking only at Aphaenogaster.  I do
 not see that you have done so.
@@ -119,9 +131,10 @@ Response: I had done this, and the results were included in previous
 drafts; however, they were switched in favor of the current results in
 order to have more statistical power, which as a comment of a few
 people, but was definitely a comment from Nick who has significant
-stats experience. 
+stats experience. I've drafted the response letter to explain the
+statistical issues with this and that similar inferences can be drawn
+with the current results without the Aphaenogaster only analysis.
 
-??? Add to response letter.
 
 L210 You need to remove this stuff.  The reviewers did not buy it.
 
@@ -134,6 +147,8 @@ very end that understanding climate adaptation at the genomic level
 can provide insights for prospective changes under climate change, but
 that's a step farther removed from where you are now.
 
+Response: I've moved more of the speculation to the discussion and
+re-phrased the Intro content to tone this down as well.
 
 L213 now you have returned to climate change, but you should be
 focusing on climate adaptation across ants.  What is known about
@@ -141,10 +156,12 @@ climate adaptation in ants in extreme environments?  Variation in
 freeze-tolerance?  What characteristics to the currently sequenced
 species possess, and how are Aphaenogaster different?
 
-Response: I'll add the climate adapation language to the text, which
-I think will help to strengthen the narrative, and make it clear that
-although we are not studying climate change impacts, we are looking
-toward the potential impacts of climate change. 
+Response: I've added some climate adapation language (mainly about
+response to cold temperatures) as part of my reorganization of the
+setup to the genome-climate analyses in the Intro.  I think this will
+help to strengthen the narrative, and make it clear that although we
+are not studying climate change impacts, we are looking toward the
+potential impacts of climate change.
 
 
 L216 It is not strong, because it is confounded.
