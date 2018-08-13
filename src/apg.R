@@ -1522,6 +1522,21 @@ mantel(gs.nodino ~ mor.nodino)
 mantel(all.gs.d ~ mor.d)
 plot(hclust(mor.d))
 
+### Use MASH distance
+mrank <- TRUE
+ecodist::mantel(size.d ~ all.mash.d, nperm = 50000, mrank = mrank)
+
+ecodist::mantel(all.mash.d ~ wc.d, nperm = 50000, mrank = mrank)
+ecodist::mantel(all.mash.d ~ wc.d + size.d , nperm = 50000, mrank = mrank)
+
+ecodist::mantel(size.d ~ wc.d, nperm = 50000, mrank = mrank)
+ecodist::mantel(size.d ~ wc.d + all.mash.d, nperm = 50000, mrank = mrank)
+
+ecodist::mantel(size.d.napg ~ wc.d.napg, nperm = 50000, mrank = mrank)
+ecodist::mantel(size.d.napg ~ wc.d.napg + all.mash.d.napg, nperm = 50000, mrank = mrank)
+ecodist::mantel(all.mash.d.napg ~ wc.d.napg + size.d.napg, nperm = 50000, mrank = mrank)
+
+
 ### Climate table
 clim.tab <- clim.df[grepl("Aphaenogaster", rownames(clim.df)), 
                     c("Lat", "Lon", "Tmin", "Tmax", "PA")]
