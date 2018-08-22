@@ -524,6 +524,8 @@ clim.df <- df
 apg.bio <- df[grep("Aphaenogaster",rownames(df)),]
 apg.mash <- ncbi.gen[grep("Aphaenogaster",rownames(df)),grep("Aphaenogaster",rownames(df))]
 all(rownames(apg.bio) == rownames(apg.mash))
+
+### Size NMDS
 if (!(file.exists("../data/storage/apg/nmds_all.csv")) | update.nmds){
     n.dim <- 2
     ord <- nmds(as.dist(all.mash),n.dim,n.dim, nits = 500)
@@ -567,8 +569,6 @@ if (all(rownames(clim.df) == rownames(all.mash))){
 
 
 ### Vector analysis
-set.seed(2111981)
-vec <- envfit(nms, df, perm = 10000)
 set.seed(2111981)
 apg.vec <- envfit(apg.nms, apg.bio, perm = 10000)
 vec.out <- cbind(r = (vec[["vectors"]][["r"]]), p = vec[["vectors"]][["pvals"]])
@@ -1524,17 +1524,17 @@ plot(hclust(mor.d))
 
 ### Use MASH distance
 mrank <- TRUE
-ecodist::mantel(size.d ~ all.mash.d, nperm = 50000, mrank = mrank)
+ecodist::mantel(all.mash.d ~ size.d, nperm = 50000, mrank = mrank)
+ecodist::mantel(all.mash.d ~ wc.d + all.gd, nperm = 50000, mrank = mrank)
+ecodist::mantel(size.d ~ wc.d + all.mash.d + all.gd, nperm = 50000, mrank = mrank)
 
-ecodist::mantel(all.mash.d ~ wc.d, nperm = 50000, mrank = mrank)
-ecodist::mantel(all.mash.d ~ wc.d + size.d , nperm = 50000, mrank = mrank)
-
-ecodist::mantel(size.d ~ wc.d, nperm = 50000, mrank = mrank)
-ecodist::mantel(size.d ~ wc.d + all.mash.d, nperm = 50000, mrank = mrank)
-
-ecodist::mantel(size.d.napg ~ wc.d.napg, nperm = 50000, mrank = mrank)
-ecodist::mantel(size.d.napg ~ wc.d.napg + all.mash.d.napg, nperm = 50000, mrank = mrank)
-ecodist::mantel(all.mash.d.napg ~ wc.d.napg + size.d.napg, nperm = 50000, mrank = mrank)
+### Parsing relationship between climate and size
+size.pair <- cbind(size = all.size[,"size"], 
+                   clim.df[,c("Tmin", 
+                              "Tmax", 
+                              "PA",
+                              "Lon")])
+summary(lm(size ~ Tmin + Tmax + PA + Lon, data = size.pair))
 
 
 ### Climate table
@@ -1589,6 +1589,17 @@ abline(lm(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~
 points(ncbi.gs[grepl("Dinopon", names(cyto.gs))], 
        cyto.gs[grepl("Dinopon", names(cyto.gs))])
 abline(lm(cyto.gs ~ ncbi.gs), col = "grey", lty = 2)
+dev.off()
+
+pdf("../results/size_tmin.pdf")
+par(mfrow = c(1, 1))
+plot(size ~ Tmin, data = size.pair, pch = "", xlim = c(-15, 25), 
+     xlab = "Tmin (Degrees Celcius)", 
+     ylab = "Genome Assembly Size (Mb)")
+text(size.pair[, "Tmin"], size.pair[, "size"], 
+     labels = sapply(rownames(size.pair), get_names), 
+     cex = 0.75)
+abline(lm(size ~ Tmin, data = size.pair))
 dev.off()
 
 ### Table: size ~ biogeo

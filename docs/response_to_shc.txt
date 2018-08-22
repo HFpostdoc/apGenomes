@@ -1,0 +1,43 @@
+L32 Changed abstract to be more specific.
+
+L61 Updating with directionality of crustacean cold temperature
+response
+
+L69 Added citations
+
+Fig 1 Added ants (Formicidae)
+
+L113 Removed sentence, was removed in a previous version, not sure how
+it came back.
+
+L114 Removed first sentence.
+
+L153 Completed sentence.
+
+L162 Streamlined wording of this paragraph.
+
+L177 Clarified size similarity. 
+
+L182 The sign of the R value indicates directionality. I added text to
+indicate directionality for the aid of the reader. 
+
+L192 Re-worded for clarity.
+
+L207 Made the final sentence more specific to the findings.
+
+L226 I added discussion of a couple of specific hypotheses about
+direct and indirect selection of cold temperatures on genome size to
+the last discussion paragraph. This builds more directly on the
+literature already discussed, including John Stanton-Geddes
+transcriptomics paper. 
+
+L232 Lead to led.
+
+L242 Added direction.
+
+L249 Hessen is referring to nutrient limitation, however, this is a
+useful reference as it ultimately makes the point that selection can
+act both directly and indirectly to influence genome size.
+
+
+
