@@ -570,6 +570,7 @@ if (all(rownames(clim.df) == rownames(all.mash))){
 
 ### Vector analysis
 set.seed(2111981)
+vec <- envfit(nms, df, perm = 10000)
 apg.vec <- envfit(apg.nms, apg.bio, perm = 10000)
 vec.out <- cbind(r = (vec[["vectors"]][["r"]]), p = vec[["vectors"]][["pvals"]])
 apg.vec.out <- cbind(r = (apg.vec[["vectors"]][["r"]]), p = apg.vec[["vectors"]][["pvals"]])

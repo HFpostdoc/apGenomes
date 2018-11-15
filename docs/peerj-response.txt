@@ -1,3 +1,8 @@
+Thank you to the editor and reviewers, whose comments were
+constructive and contributed to the improvement of the manuscript. We
+have addressed all points (see "RESPONSE" and referenced line
+numbers).
+
 Reviewer 1 (Anonymous)
 Basic reporting
 
@@ -33,8 +38,8 @@ I think it is enough to report these relationships and speculate some
 in the Discussion as the what they might mean, but as written, I do
 not feel the title reflects the study or its findings.
 
-RESPONSE: Added more background linking to climate adapation, genome
-size and responses to climate (see lines 57-65). Clarified that
+RESPONSE: We have added more background linking to climate adapation,
+genome size and responses to climate (see lines 57-65). Clarified that
 climate change is the motivation and climate adapation is the
 basis. We have also added an updated analysis that now includes MASH
 genomic similarity as a control for phylogenetic relatedness (see
@@ -58,12 +63,13 @@ insights and get on with a discussion about genomics and climate
 adaptation - either broadly or in ants specifically to the extent that
 is possible.
 
-RESPONSE: Text has been focused and points regarding responses to
-climate change have been changed to focus on adaptations to climate
-(e.g. lines 55-65 and 75-83). Ecological background on Aphaenogaster
-reduced in the introduction and discussion of the biogeographic
-patterns has been moved to the Discussion section (e.g. lines
-234-250).
+RESPONSE: Ecological background on Aphaenogaster reduced in the
+introduction and discussion of the biogeographic patterns has been
+moved to the Discussion section (e.g. lines 234-250), and overall we
+have edited to make the text more focused and language regarding
+climate have been clarified to address adaptations to climate
+(e.g. lines 55-65 and 75-83) with climate change as a motivating
+context for the study, not a direct subject of study.
 
 (3) A few minor points: 
 
@@ -94,8 +100,8 @@ not among the 19 standard bioclim variables from WordClim - are these
 custom or referring to BIO5/6 (which are month not annual)?
 
 RESPONSE: These were referring to the BioClim Min Temperature of the
-Coldest Month and Maximum Temperature of the Warmest Month. These
-references have been fixed in the text (see lines 171-173). 
+Coldest Month and Maximum Temperature of the Warmest Month. We have
+updated both of these in the text (see lines 171-173).
 
 Experimental design
 
@@ -228,7 +234,10 @@ on the biogeographic context has been reduced (e.g. lines 71-74 and
 - Make it clear that the manuscript mainly reports a powerful new
   phylogenomic resource for an important ant genus
 
-RESPONSE: 
+RESPONSE: We have added text to the abstract, introduction and
+conclusion pointing to the importance of these genomes as a resource
+for future studies of ant genomics (see Lines 35-36, 82-84 and
+267-271).
 
 - Change the title and abstract (and other parts) of the manuscript to
   focus on the resource and dramatically tone down interpretations
