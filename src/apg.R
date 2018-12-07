@@ -239,6 +239,26 @@ ncbi.rv <- c(11,19,14,15,9,5,7,10,6,4,8,12,1,2,24,3,22,23,20,25,26,18,21,16,13,1
 mash <- mash[grep("Aphaenogaster",rownames(mash)),grep("Aphaenogaster",rownames(mash))]
 if (no.rudis){mash <- mash[!(grepl("rud", rownames(mash))),!(grepl("rud", colnames(mash)))]}
 
+## Size estimates from genomescope
+gs.size <- readLines("../data/storage/apg/gs_summary.txt")
+gs.size <- gsub("%", "", gs.size)
+gs.size <- gsub(",", "", gs.size)
+gs.size <- gsub(" bp", "", gs.size)
+gs.size <- do.call(rbind, strsplit(gs.size, "[ ]{2,}"))
+gs.size <- cbind(
+    sapply(gs.size[, 1], function(x) strsplit(x, "\\:")[[1]][2]),
+    substr(do.call(rbind, strsplit(gs.size[, 1], "\\_"))[, 3], 1, 2), 
+    gs.size[, 2:3])
+gs.size[, 2:4] <- apply(gs.size[, 2:4], 2, as.numeric)
+gs.size <- gs.size[grepl("Unique Length", gs.size[, 1]), ]
+gs.size <- gs.size[grepl("AZXX", rownames(gs.size)) | grepl("AJDMW", rownames(gs.size)), ]
+gs.size <- gs.size[gs.size[, 2] == "10", ]
+
+plot(as.numeric(gs.size[, 3]), gaemr.tab[,"TotalScaffoldLength"])
+cor.test(as.numeric(gs.size[, 3]), gaemr.tab[,"TotalScaffoldLength"])
+
+plot(as.numeric(gs.size[as.numeric(gs.size[, 3]) < 400000, 2]), as.numeric(gs.size[as.numeric(gs.size[, 3]) < 400000, 3]))
+
 
 ## mash network for ants
 mashP.ncbi <- get.mash.p(mash.txt) 
