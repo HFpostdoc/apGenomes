@@ -2,11 +2,11 @@
 #SBATCH -N 1
 #SBATCH -n 16
 #SBATCH -p serial_requeue
-#SBATCH -e genomescope%j.err           # File to which STDERR will be written
-#SBATCH -o genomescope%j.out         # File to which STDOUT will be written
-#SBATCH -J genomescope          # Job name
+#SBATCH -e gscope%j.err           # File to which STDERR will be written
+#SBATCH -o gscope%j.out         # File to which STDOUT will be written
+#SBATCH -J gscope          # Job name
 #SBATCH --mem=6000                     # Memory requested
-#SBATCH --time=01:00:00                # Runtime in HH:MM:SS
+#SBATCH --time=00:30:00                # Runtime in HH:MM:SS
 #SBATCH --mail-type=FAIL                # Type of email notification- BEGIN,END,FAIL,ALL
 #SBATCH --mail-user=matthewklau@fas.harvard.edu # Email to send notifications to
 

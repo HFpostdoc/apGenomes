@@ -11,13 +11,14 @@ update.nmds <- FALSE # Re-run the NMS?
 refresh.clim <- FALSE # Get updated climate data?
 update.results <- FALSE # Copy results to docs/manuscript?
 p.clust <- FALSE # Create boot-strap supported cluster of climate?
+create.pathdiagram <- FALSE # Create a path diagram for the MASH data?
 
 ### Check install of package dependencies
 pkg.lib <- c("gdata", "prism", "ggplot2", "raster", "AntWeb", "geosphere",
              "rnoaa", "gdata", "prism", "ggplot2", "raster", "vegan", 
              "tidyr", "stringr", "prism", "raster", "XML", "RCurl",
              "rlist", "rentrez","xtable","broom","ecodist","tibble","igraph",
-             "sp", "ggmap",  "pvclust", "Rgraphviz", "ape")
+             "sp", "ggmap",  "pvclust", "ape")
 
 missing.pkgs <- pkg.lib[!(pkg.lib %in% installed.packages()[,1])]
 
@@ -103,15 +104,15 @@ as.wmat <- function(x = "Phylo object"){
 print("Loading data")
 ## rebuild the stats tables
 make.stats.table <- FALSE
-broad.info <- read.csv("../data/storage/apg/broad_sample_key.csv")
+broad.info <- read.csv("../data/storage/apg/ap_data/broad_files/broad_sample_key.csv")
 if (no.rudis){broad.info <- broad.info[!(grepl("rud", broad.info$Collaborator.Sample.ID)),]}
-sample.info <- read.csv("../data/storage/apg/colony_locations.csv")
+sample.info <- read.csv("../data/storage/apg/ap_data/colony_locations.csv")
 if (no.rudis){sample.info <- sample.info[!(grepl("rud", sample.info$broadID)),]}
-ant.info <- read.csv("../data/storage/apg/RADseq_mastersheet_2014.csv")
+ant.info <- read.csv("../data/storage/apg/ap_data/RADseq_mastersheet_2014.csv")
 
 ant.info <- ant.info[ant.info$Species..varying.ID.sources...Bernice.if.different.from.original.ID. %in% na.omit(sample.info$spec_epithet),]
 ant.info <- ant.info[!ant.info$State == "",]
-ant.geo <- read.csv("../data/storage/apg/ant_sites.csv")
+ant.geo <- read.csv("../data/storage/apg/ap_data/ant_sites.csv")
 ant.geo[,c("Lon","Lat")] <- apply(ant.geo[,c("Lon","Lat")],2,as.numeric)
 ant.info <- data.frame(ant.info,
                        ant.geo[match(as.character(ant.info$Locale),ant.geo$Site),c("Lon","Lat")])
@@ -173,7 +174,7 @@ gaga.loc <- data.frame(gaga.loc)
 
 ### Ant genome size information
 ### from ncbi and new aphaenogaster genomes
-ncbi.ant <- read.csv("../data/storage/apg/ncbi_ant.csv")
+ncbi.ant <- read.csv("../data/storage/apg/ncbi_data/ncbi_ant.csv")
 colnames(ncbi.ant)[1] <- 'Organism'
 ## Parse the reference sizes
 ref.sizes <- c(as.numeric(ncbi.ant[,'Size..Mb.']),ant.gen.size[,'1C Genome Size (Mb)'])
@@ -207,7 +208,7 @@ gs.pd.dq <- abs(cyto.gs[grepl("Dinopon", names(cyto.gs))] - ncbi.gs[grepl("Dinop
 ### Analyze the mash distnaces
 
 ## gaemr info
-gaemr.tab <- read.csv("../data/storage/apg/gaemr-table.csv")
+gaemr.tab <- read.csv("../data/storage/apg/ap_data/broad_files/gaemr-table.csv")
 gaemr.tab <- gaemr.tab[!grepl("Name",gaemr.tab[,"Metric"]),]
 gaemr.tab <- gaemr.tab[!grepl("Assembler",gaemr.tab[,"Metric"]),]
 gaemr.tab <- split(gaemr.tab[,c("Metric","Value")],gaemr.tab[,"ID"])
@@ -216,7 +217,7 @@ metrics <- gaemr.tab[[1]]["Metric",]
 gaemr.tab <- do.call(rbind,lapply(gaemr.tab,function(x) as.numeric(x["Value",])))
 colnames(gaemr.tab) <- metrics
 if (no.rudis){gaemr.tab <- gaemr.tab[!(rownames(gaemr.tab) %in% c("SM-AJDMW","SM-AZXXM")),]}
-broad.info <- read.csv("../data/storage/apg/broad_sample_key.csv")
+broad.info <- read.csv("../data/storage/apg/ap_data/broad_files/broad_sample_key.csv")
 broad.info[,"Collaborator.Sample.ID"] <- as.character(broad.info[,"Collaborator.Sample.ID"])
 broad.info[broad.info[,"Collaborator.Sample.ID"] == "arudis1","Collaborator.Sample.ID"] <- "rud1"
 broad.info[broad.info[,"Collaborator.Sample.ID"] == "rud6","Collaborator.Sample.ID"] <- "rud2"
@@ -454,9 +455,9 @@ if (!(dir.exists("~/prismtmpnormals")) | refresh.clim){
     rownames(data)[rownames(data) == "arudis1"] <- "rud1"
     data[,"mypoints.id"] <- as.character(data[,"mypoints.id"])
     data[rownames(data) == "rud1","mypoints.id"] <- "rud1"
-    write.csv(data, "../data/storage/apg/prism_clim_data.csv", row.names = FALSE)
+    write.csv(data, "../data/storage/apg/ap_data/prism_clim_data.csv", row.names = FALSE)
 }else{
-    data <- read.csv("../data/storage/apg/prism_clim_data.csv")
+    data <- read.csv("../data/storage/apg/ap_data/prism_clim_data.csv")
     rownames(data) <- c("rud1", "rud6", "pic1", "mia1", "ful1", "ash1", "flo1")
 }
 
@@ -510,9 +511,9 @@ if (refresh.clim){
     ## Bioclim imports temps as integers by default
     ## They just multiply by 10, so we divide to get the true temps
     df[,grep("T",colnames(df))] <- df[,grep("T",colnames(df))] / 10
-    write.csv(df, "../data/storage/apg/clim_dat_all.csv")
+    write.csv(df, "../data/storage/apg/ap_data/clim_dat_all.csv")
 }else{
-    df <- read.csv("../data/storage/apg/clim_dat_all.csv")
+    df <- read.csv("../data/storage/apg/ap_data/clim_dat_all.csv")
     rownames(df) <- df[,1]
     df <- df[,-1]
 }
@@ -521,7 +522,7 @@ if (refresh.clim){
 clim.df <- df
 
 ### Just Ap
-apg.bio <- df[grep("Aphaenogaster",rownames(df)),]
+apg.bio <- df[grep("Aphaenogaster",rownames(df)), ]
 apg.mash <- ncbi.gen[grep("Aphaenogaster",rownames(df)),grep("Aphaenogaster",rownames(df))]
 all(rownames(apg.bio) == rownames(apg.mash))
 
@@ -571,7 +572,7 @@ if (all(rownames(clim.df) == rownames(all.mash))){
 ### Vector analysis
 set.seed(2111981)
 apg.vec <- envfit(apg.nms, apg.bio, perm = 10000)
-vec.out <- cbind(r = (vec[["vectors"]][["r"]]), p = vec[["vectors"]][["pvals"]])
+vec.out <- cbind(r = (apg.vec[["vectors"]][["r"]]), p = apg.vec[["vectors"]][["pvals"]])
 apg.vec.out <- cbind(r = (apg.vec[["vectors"]][["r"]]), p = apg.vec[["vectors"]][["pvals"]])
 set.seed(2111981)
 napg.vec <- envfit(napg.nms, df[ap != "Ap",])
@@ -668,8 +669,8 @@ print(wc.all.xtab,
 ### Inter-species comparisons
 ### Load other ant genome information
 apgs <- dir("../data/storage/apg",full = TRUE)
-sample.info <- read.csv("../data/storage/apg/colony_locations.csv")
-broad.info <- read.csv("../data/storage/apg/broad_sample_key.csv")
+sample.info <- read.csv("../data/storage/apg/ap_data/colony_locations.csv")
+broad.info <- read.csv("../data/storage/apg/ap_data/broad_files/broad_sample_key.csv")
 if (no.rudis){
     sample.info <- sample.info[!(grepl("rud",sample.info[,"broadID"])),]
     broad.info <- broad.info[!(grepl("rud",broad.info[,"Collaborator.Sample.ID"])),]
@@ -1473,6 +1474,7 @@ print(mash.path.xtab,
 
 
 ## Path diagram
+if (create.pathdiagram == TRUE){
 mash.A <- round(path.ig[["r"]],3)
 mash.A[is.na(mash.A)] <- 0
 mash.Ap <- round(path.ig[["p"]],3)
@@ -1490,17 +1492,19 @@ ec.p[unlist(edgeWeights(ig.p)) >= 0.1] <- "grey"
 ec.p <- as.character(ec.p)
 names(ec.p) <- names(ew.r) <- edgeNames(ig)
 attr.e <- list(label = ew.r, color = ec.p)
-
+                                        #
 pdf("../results/mash_path.pdf",height = 5, width = 5)
 plot(ig, attrs = attr, edgeAttrs = attr.e)
 dev.off()
+}
 
 ### Linear regression Size ~ biogeo
 lm.all.size <- lm(size ~ lat + lon + MAT + Tmin + Tmax + PA + PS, data = data.frame(clim.df, all.sizegeo))
 
 ### Phylogeny
 ### Prune tips to match NCBI
-mor.phy <- read.nexus("../data/storage/apg/Moreau_et_al._2006_Data_Tree_with_BL.nex")
+## http://moreaulab.org/wp-content/uploads/datafiles/Moreau_et_al._2006_Data_Tree_with_BL.nex
+mor.phy <- read.nexus("../data/storage/apg/ncbi_data/Moreau_et_al._2006_Data_Tree_with_BL.nex")
 all.lab <- do.call(rbind, strsplit(all.size[, "species"], " "))[,1]
 all.gs <- tapply(all.size[, "size"], all.lab, mean)
 all.gs <- all.gs[order(names(all.gs))]
@@ -1650,6 +1654,37 @@ print(xtab.perm.mash.napg,
       include.colnames = TRUE
       )
 
+## Busco Summary Statistics
+busco.hymen <- read.table("../data/storage/apg/busco/busco_hymen_brief.txt")
+busco.hymen[, 1] <- do.call(rbind, 
+                            strsplit(as.character(busco.hymen[, 1]), "_"))[, 2]
+busco.hymen[, 1] <- do.call(rbind, 
+                            strsplit(as.character(busco.hymen[, 1]), "/"))[, 1]
+busco.hymen[, 3] <- substr(busco.hymen[, 2], 3, 6)
+busco.insect <- read.table("../data/storage/apg/busco/busco_insect_brief.txt")
+busco.insect[, 1] <- do.call(rbind, 
+                            strsplit(as.character(busco.insect[, 1]), "_"))[, 2]
+busco.insect[, 1] <- do.call(rbind, 
+                            strsplit(as.character(busco.insect[, 1]), "/"))[, 1]
+busco.insect[, 3] <- substr(busco.insect[, 2], 3, 6)
+busco.hymen.apg <- as.numeric(busco.hymen[grepl("SM-AZ", busco.hymen[, 1]) | 
+                                 grepl("SM-AJ", busco.hymen[, 1]), 3])
+busco.hymen.noapg <- as.numeric(busco.hymen[!(grepl("SM-AZ", busco.hymen[, 1]) | 
+                                 grepl("SM-AJ", busco.hymen[, 1])), 3])
+
+range(as.numeric(busco.hymen.noapg))
+mean(as.numeric(busco.hymen.noapg))
+sd(as.numeric(busco.hymen.noapg)) / sqrt(length((as.numeric(busco.hymen.noapg))))
+range(busco.hymen.apg)
+mean(busco.hymen.apg)
+sd(busco.hymen.apg) / sqrt(length(busco.hymen.apg))
+
+
+## BUSCO plots
+source("./hymen_apg_busco.R")
+source("./hymen_all_busco.R")
+source("./insect_apg_busco.R")
+source("./insect_all_busco.R")
 
 ## system("scp ../results/clim_cor.pdf matthewklau@fas.harvard.edu:public_html/tmp.pdf")
 
