@@ -1264,7 +1264,7 @@ my_colors <- c("#56B4E9", "#3492C7", "#F0E442", "#F04442")
 # Bar height ratio
 my_bar_height <- 0.75
 # Legend
-my_title <- "Hymenoptera Lineage"
+my_title <- ""
 # Font
 my_family <- "sans"
 my_size_ratio <- 1
