@@ -6,6 +6,7 @@ set.seed(2111981)
 
 print("Loading libraries")
 
+rm.dino <- TRUE # Remove Dinoponera quadriceps from some analyses
 no.rudis <- FALSE # Remove the two A. rudis from the data set?
 update.nmds <- FALSE # Re-run the NMS?
 refresh.clim <- FALSE # Get updated climate data?
@@ -192,14 +193,17 @@ cyto.avg <- tapply(cyto.sizes, cyto.genera, mean)
 cyto.gs <- cyto.avg[names(cyto.avg) %in% names(ncbi.gs)]
 ncbi.gs <- ncbi.gs[names(ncbi.gs) %in% names(cyto.avg)]
 
-cor.test(cyto.gs, ncbi.gs, "greater", "s")
-cor.test(cyto.gs[!grepl("Dinopon", names(cyto.gs))], 
-         ncbi.gs[!grepl("Dinopon", names(cyto.gs))], "greater", "p")
-
-gs.pd <- abs(cyto.gs[!grepl("Dinopon", names(cyto.gs))] - ncbi.gs[!grepl("Dinopon", names(cyto.gs))]) / ((cyto.gs[!grepl("Dinopon", names(cyto.gs))] + ncbi.gs[!grepl("Dinopon", names(cyto.gs))]) / 2) * 100
-
-gs.pd.dq <- abs(cyto.gs[grepl("Dinopon", names(cyto.gs))] - ncbi.gs[grepl("Dinopon", names(cyto.gs))]) / ((cyto.gs[grepl("Dinopon", names(cyto.gs))] + ncbi.gs[grepl("Dinopon", names(cyto.gs))]) / 2) * 100
-
+## Examine the correlation between assembly length and genome size
+summary(lm(cyto.gs~ ncbi.gs))
+## Check for outliers
+plot(cooks.distance(lm(cyto.gs~ ncbi.gs)))
+abline(h = mean(cooks.distance(lm(cyto.gs~ ncbi.gs))) * 4, lty = 2, col = "red")
+abline(h = mean(cooks.distance(lm(cyto.gs~ ncbi.gs))) * 3, lty = 2, col = "black")
+## Remove Dinoponera quadriceps due to the large discrepancy between size and length
+no.dino.cyto.ncbi <- lm(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))])
+plot(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))], 
+     xlab = "Genus Average NCBI Assembly Length", ylab = "Genus Average Flow Cytometry")
+abline(no.dino.cyto.ncbi)
 
 ## source("src/apg_mash.R")
 ### Analyze the mash distnaces
@@ -224,8 +228,15 @@ if (no.rudis){broad.info <- broad.info[!(grepl("rud", broad.info$Collaborator.Sa
 ## MASH scripts are located in apGenomes/bin
 geno.info <- read.csv("../data/storage/apg/gen_seq_info.csv")
 mash.txt <- read.table("../data/storage/apg/mash_dist.txt",sep = "\t")
+mash.withdino <- as.mashdist(mash.txt) 
+genoinfo.withdino <- geno.info
+if (rm.dino){
+    geno.info <- geno.info[!(grepl("Dinoponera", geno.info[, "species"])), ]
+    mash.txt <- mash.txt[!(grepl("DQUA", mash.txt[, 1])) & !(grepl("DQUA", mash.txt[, 2])), ]
+}else{}
 mash <- as.mashdist(mash.txt) 
 rownames(mash) <- colnames(mash) <- paste0(as.character(geno.info[sapply(geno.info[,1],grep,x = rownames(mash)),2]),c("","","",1,2,rep("",nrow(geno.info) - 5)))
+rownames(mash.withdino) <- colnames(mash.withdino) <- paste0(as.character(genoinfo.withdino[sapply(genoinfo.withdino[,1],grep,x = rownames(mash.withdino)),2]),c("","","",1,2,rep("",nrow(genoinfo.withdino) - 5)))
 if (no.rudis){
     mash <- mash[!(grepl("rud", rownames(mash))),!(grepl("rud", colnames(mash)))]
     geno.info <- geno.info[!(grepl("rudis",geno.info[,"species"])),]
@@ -233,6 +244,16 @@ if (no.rudis){
 ncbi.gen <- mash
 rownames(ncbi.gen)[rownames(ncbi.gen) == "Cerapachys biroi"] <- "Ooceraea biroi"
 colnames(ncbi.gen)[colnames(ncbi.gen) == "Cerapachys biroi"] <- "Ooceraea biroi"
+rownames(ncbi.gen)[rownames(ncbi.gen) == "Solenopsis invicta"] <- "Solenopsis fugax"
+colnames(ncbi.gen)[colnames(ncbi.gen) == "Solenopsis invicta"] <- "Solenopsis fugax"
+geno.info[, "species"] <- as.character(geno.info[, "species"])
+geno.info[geno.info[, "species"] == "Solenopsis invicta", "species"] <- "Solenopsis fugax"
+ncbigen.withdino <- mash.withdino
+rownames(ncbigen.withdino)[rownames(ncbigen.withdino) == "Cerapachys biroi"] <- "Ooceraea biroi"
+colnames(ncbigen.withdino)[colnames(ncbigen.withdino) == "Cerapachys biroi"] <- "Ooceraea biroi"
+rownames(ncbigen.withdino)[rownames(ncbigen.withdino) == "Solenopsis invicta"] <- "Solenopsis fugax"
+colnames(ncbigen.withdino)[colnames(ncbigen.withdino) == "Solenopsis invicta"] <- "Solenopsis fugax"
+
 ncbi.rv <- c(11,19,14,15,9,5,7,10,6,4,8,12,1,2,24,3,22,23,20,25,26,18,21,16,13,17)
 mash <- mash[grep("Aphaenogaster",rownames(mash)),grep("Aphaenogaster",rownames(mash))]
 if (no.rudis){mash <- mash[!(grepl("rud", rownames(mash))),!(grepl("rud", colnames(mash)))]}
@@ -251,12 +272,6 @@ gs.size[, 2:4] <- apply(gs.size[, 2:4], 2, as.numeric)
 gs.size <- gs.size[grepl("Unique Length", gs.size[, 1]), ]
 gs.size <- gs.size[grepl("AZXX", rownames(gs.size)) | grepl("AJDMW", rownames(gs.size)), ]
 gs.size <- gs.size[gs.size[, 2] == "10", ]
-
-plot(as.numeric(gs.size[, 3]), gaemr.tab[,"TotalScaffoldLength"])
-cor.test(as.numeric(gs.size[, 3]), gaemr.tab[,"TotalScaffoldLength"])
-
-plot(as.numeric(gs.size[as.numeric(gs.size[, 3]) < 400000, 2]), as.numeric(gs.size[as.numeric(gs.size[, 3]) < 400000, 3]))
-
 
 ## mash network for ants
 mashP.ncbi <- get.mash.p(mash.txt) 
@@ -411,7 +426,9 @@ if (all(sapply(c("lat","lon"),grepl, x = colnames(ncbi_info)))){
 ### Get climate for ncbi locs
 r <- getData("worldclim",var="bio",res=2.5)
 wc <- r 
-names(wc) <- c("MAT", "MDR", "Iso", "TS", "Tmax", "Tmin", "ATR", "MTWeQ", "MTDQ","MTWaQ", "MTCQ", "PA", "PWM", "PDM", "PS", "PWeQ", "PDQ", "PWaQ", "PCQ")
+names(wc) <- c("MAT", "MDR", "Iso", "TS", "Tmax", "Tmin",
+               "ATR", "MTWeQ", "MTDQ","MTWaQ", "MTCQ", "PA", 
+               "PWM", "PDM", "PS", "PWeQ", "PDQ", "PWaQ", "PCQ")
 bio.labs <- c(
 MAT = "MAT: Annual Mean Temperature (BIO1)",
 MDR = "MDR: Mean Diurnal Range (Mean of monthly (max temp - min temp)) (BIO2)",
@@ -505,6 +522,7 @@ apg.merging <- data.frame(Species.name = rownames(as.matrix(mash.d)),
                           lat = apg.geo[,'Latitude'])
 all.geo <- rbind(ncbi.gps[,c("Species.name","lon","lat")], 
                  apg.merging)
+all.geo[grep("Solenopsis invicta", all.geo[, "Species.name"]), "Species.name"] <- "Solenopsis fugax"
 all.geo <- all.geo[match(rownames(ncbi.gen),all.geo[,"Species.name"]),]
 all.geo <- na.omit(all.geo)
 all.mash <- ncbi.gen
@@ -513,9 +531,6 @@ all.mash <- all.mash[sapply(rownames(all.mash), function(x) x %in% all.geo[,"Spe
 all.mash <- all.mash[na.omit(match(all.geo[,"Species.name"],rownames(all.mash))),
          na.omit(match(all.geo[,"Species.name"],rownames(all.mash)))]
 all.geo <- all.geo[sapply(all.geo[,"Species.name"], function(x) x %in% rownames(all.mash)),]
-
-all(all(rownames(all.mash) == colnames(all.mash)) & 
-        all(rownames(all.mash) == all.geo[,"Species.name"]))
 
 ### Setup variables for plotting and analysis
 if (refresh.clim){
@@ -534,6 +549,13 @@ if (refresh.clim){
     rownames(df) <- df[,1]
     df <- df[,-1]
 }
+
+if (rm.dino){
+    df <- df[!(grepl("Dinoponera", rownames(df))), ]
+}else{}
+
+## Solenopsis invicta to Solenopsis fugax
+rownames(df)[grep("Solenopsis invicta", rownames(df))] <- "Solenopsis fugax"
 
 ### For climate heatmap plotting
 clim.df <- df
@@ -917,6 +939,7 @@ apg.size <- data.frame(species = broad.info[,"Collaborator.Sample.ID"],
 apg.size[,"species"] <- as.character(na.omit(all.geo[match(apg.size[,"species"],
                                                            rownames(all.geo)),"Species.name"]))
 all.size <- rbind(ncbi.size, apg.size)
+all.size[grep("Solenopsis invicta", all.size[, "species"]), "species"] <- "Solenopsis fugax"
 all.size <- all.size[match(all.geo[,"Species.name"],all.size[,"species"]),]
 if (!(all(all.geo[,1] == all.size[,1]))){print("Danger Will Robinson!!!")}
 all.sizegeo <- data.frame(all.geo,size = all.size[,"size"])
@@ -988,16 +1011,16 @@ if (no.rudis){
 }
 
 set.seed(1649)
-mantel.tab <- list(clim.geo = ecodist::mantel(clim.d~geo.d, nperm = 10000),
-                  mash.clim = ecodist::mantel(mash.d~clim.d, nperm = 10000),
-                  mash.temp = ecodist::mantel(mash.d~temp.d, nperm = 10000),
-                  temp.geo = ecodist::mantel(temp.d~geo.d, nperm = 10000),
-                  mash.temp_geo = ecodist::mantel(mash.d~temp.d + geo.d, nperm = 10000),
-                  mash.tmin_geo = ecodist::mantel(mash.d~tmin.d+geo.d, nperm = 10000),
-                  mash.tmax_geo = ecodist::mantel(mash.d~tmax.d+geo.d, nperm = 10000),
-                  ppt = ecodist::mantel(mash.d~ppt.d, nperm = 10000),
-                  ppt.geo = ecodist::mantel(ppt.d~geo.d, nperm = 10000),
-                  mash.ppt_geo = ecodist::mantel(mash.d~ppt.d+geo.d, nperm = 10000)
+mantel.tab <- list(clim.geo = ecodist::mantel(clim.d ~ geo.d, nperm = 10000),
+                  mash.clim = ecodist::mantel(mash.d ~ clim.d, nperm = 10000),
+                  mash.temp = ecodist::mantel(mash.d ~ temp.d, nperm = 10000),
+                  temp.geo = ecodist::mantel(temp.d ~ geo.d, nperm = 10000),
+                  mash.temp_geo = ecodist::mantel(mash.d ~ temp.d + geo.d, nperm = 10000),
+                  mash.tmin_geo = ecodist::mantel(mash.d ~ tmin.d+geo.d, nperm = 10000),
+                  mash.tmax_geo = ecodist::mantel(mash.d ~ tmax.d+geo.d, nperm = 10000),
+                  ppt = ecodist::mantel(mash.d ~ ppt.d, nperm = 10000),
+                  ppt.geo = ecodist::mantel(ppt.d ~ geo.d, nperm = 10000),
+                  mash.ppt_geo = ecodist::mantel(mash.d ~ ppt.d+geo.d, nperm = 10000)
 )
 mantel.tab <- do.call(rbind,mantel.tab)
 mantel.tab <- mantel.tab[,c(1,2)]
@@ -1013,7 +1036,7 @@ print(mantel.xtab,
       )
 
 ## Geography and climate
-mantel.geog <- ecodist::mantel(clim.d~geo.cd, nperm = 10000)
+mantel.geog <- ecodist::mantel(clim.d ~ geo.cd, nperm = 10000)
 
 ### gaemr correlations
 gc.dat <- data.frame(GC = gaemr.tab[,"AssemblyGC"], 
@@ -1064,7 +1087,7 @@ write.table(results.sim.size,
             row.names = FALSE, col.names = FALSE, quote = FALSE)
 
 set.seed(1981)
-perm.size <- adonis(size.d ~ Lat + Lon + MAT + Tmin + Tmax + PA + PS, 
+perm.size <- adonis2(size.d ~ Lat + Lon + MAT + Tmin + Tmax + PA + PS, 
        data = clim.df,
        perm = 10000)
 set.seed(1981)
@@ -1229,10 +1252,11 @@ ggplot(df,aes(geo,mash)) + geom_point() +
 dev.off()
 
 ## Heatmap
+## Rename S. invicta to new name S. fugax
 pdf("../results/ncbi_heat.pdf")
-heatmap(ncbi.gen, 
+heatmap(ncbigen.withdino, 
         RowSideColors=rainbow(
-            nlevels(geno.info[,"subfamily"]))[as.numeric(geno.info[,"subfamily"])],
+            nlevels(genoinfo.withdino[,"subfamily"]))[as.numeric(genoinfo.withdino[,"subfamily"])],
         symm = T, margins = c(1,10),labCol = "")
 dev.off()
 
@@ -1270,7 +1294,22 @@ my_family <- "sans"
 my_size_ratio <- 1
 # !!! SEE YOUR DATA HERE !!! 
 # Your data as generated by python, remove or add more
-my_species <- c('SM-LHUM', 'SM-LHUM', 'SM-LHUM', 'SM-LHUM', 'SM-TCOR', 'SM-TCOR', 'SM-TCOR', 'SM-TCOR', 'SM-WAUR', 'SM-WAUR', 'SM-WAUR', 'SM-WAUR', 'SM-SINV', 'SM-SINV', 'SM-SINV', 'SM-SINV', 'SM-PGRA', 'SM-PGRA', 'SM-PGRA', 'SM-PGRA', 'SM-AZXXN', 'SM-AZXXN', 'SM-AZXXN', 'SM-AZXXN', 'SM-AZXXP', 'SM-AZXXP', 'SM-AZXXP', 'SM-AZXXP', 'SM-ACOL', 'SM-ACOL', 'SM-ACOL', 'SM-ACOL', 'SM-AZXXQ', 'SM-AZXXQ', 'SM-AZXXQ', 'SM-AZXXQ', 'SM-TSEP', 'SM-TSEP', 'SM-TSEP', 'SM-TSEP', 'SM-TZET', 'SM-TZET', 'SM-TZET', 'SM-TZET', 'SM-POGO', 'SM-POGO', 'SM-POGO', 'SM-POGO', 'SM-CFLO', 'SM-CFLO', 'SM-CFLO', 'SM-CFLO', 'SM-AZXXR', 'SM-AZXXR', 'SM-AZXXR', 'SM-AZXXR', 'SM-LNIG', 'SM-LNIG', 'SM-LNIG', 'SM-LNIG', 'SM-VEME', 'SM-VEME', 'SM-VEME', 'SM-VEME', 'SM-AZXXM', 'SM-AZXXM', 'SM-AZXXM', 'SM-AZXXM', 'SM-MPHA', 'SM-MPHA', 'SM-MPHA', 'SM-MPHA', 'SM-CBIR', 'SM-CBIR', 'SM-CBIR', 'SM-CBIR', 'SM-CCOS', 'SM-CCOS', 'SM-CCOS', 'SM-CCOS', 'SM-AZXXO', 'SM-AZXXO', 'SM-AZXXO', 'SM-AZXXO', 'SM-ACEP', 'SM-ACEP', 'SM-ACEP', 'SM-ACEP', 'SM-AJDMW', 'SM-AJDMW', 'SM-AJDMW', 'SM-AJDMW')
+my_species <- c('SM-LHUM', 'SM-LHUM', 'SM-LHUM', 'SM-LHUM', 'SM-TCOR',
+'SM-TCOR', 'SM-TCOR', 'SM-TCOR', 'SM-WAUR', 'SM-WAUR', 'SM-WAUR',
+'SM-WAUR', 'SM-SINV', 'SM-SINV', 'SM-SINV', 'SM-SINV', 'SM-PGRA',
+'SM-PGRA', 'SM-PGRA', 'SM-PGRA', 'SM-AZXXN', 'SM-AZXXN', 'SM-AZXXN',
+'SM-AZXXN', 'SM-AZXXP', 'SM-AZXXP', 'SM-AZXXP', 'SM-AZXXP', 'SM-ACOL',
+'SM-ACOL', 'SM-ACOL', 'SM-ACOL', 'SM-AZXXQ', 'SM-AZXXQ', 'SM-AZXXQ',
+'SM-AZXXQ', 'SM-TSEP', 'SM-TSEP', 'SM-TSEP', 'SM-TSEP', 'SM-TZET',
+'SM-TZET', 'SM-TZET', 'SM-TZET', 'SM-POGO', 'SM-POGO', 'SM-POGO',
+'SM-POGO', 'SM-CFLO', 'SM-CFLO', 'SM-CFLO', 'SM-CFLO', 'SM-AZXXR',
+'SM-AZXXR', 'SM-AZXXR', 'SM-AZXXR', 'SM-LNIG', 'SM-LNIG', 'SM-LNIG',
+'SM-LNIG', 'SM-VEME', 'SM-VEME', 'SM-VEME', 'SM-VEME', 'SM-AZXXM',
+'SM-AZXXM', 'SM-AZXXM', 'SM-AZXXM', 'SM-MPHA', 'SM-MPHA', 'SM-MPHA',
+'SM-MPHA', 'SM-CBIR', 'SM-CBIR', 'SM-CBIR', 'SM-CBIR', 'SM-CCOS',
+'SM-CCOS', 'SM-CCOS', 'SM-CCOS', 'SM-AZXXO', 'SM-AZXXO', 'SM-AZXXO',
+'SM-AZXXO', 'SM-ACEP', 'SM-ACEP', 'SM-ACEP', 'SM-ACEP', 'SM-AJDMW',
+'SM-AJDMW', 'SM-AJDMW', 'SM-AJDMW')
 new_labs <- as.character(geno.info[match(my_species, geno.info[, "ID"]), "species"])
 new_labs[my_species == "SM-AJDMW"] <- paste0(new_labs[my_species == "SM-AJDMW"], 1)
 new_labs[my_species == "SM-AZXXM"] <- paste0(new_labs[my_species == "SM-AZXXM"], 2)
@@ -1636,7 +1675,10 @@ plot(hclust(mor.d))
 mrank <- TRUE
 ecodist::mantel(all.mash.d ~ size.d, nperm = 50000, mrank = mrank)
 ecodist::mantel(all.mash.d ~ wc.d + all.gd, nperm = 50000, mrank = mrank)
-ecodist::mantel(size.d ~ wc.d + all.mash.d + all.gd, nperm = 50000, mrank = mrank)
+
+ecodist::mantel(size.d ~ wc.d * all.mash.d, nperm = 50000, mrank = mrank)
+ecodist::mantel(size.d ~ wc.d * all.mash.d * all.gd, nperm = 50000, mrank = mrank)
+
 
 ### Parsing relationship between climate and size
 size.pair <- cbind(size = all.size[,"size"], 
@@ -1701,21 +1743,30 @@ points(ncbi.gs[grepl("Dinopon", names(cyto.gs))],
 abline(lm(cyto.gs ~ ncbi.gs), col = "grey", lty = 2)
 dev.off()
 
+### Rename S. invictor, S. fugax
+rownames(size.pair)[rownames(size.pair) == "Solenopsis invicta"] <- "Solenopsis fugax"
+
 pdf("../results/size_tmin.pdf")
 par(mfrow = c(1, 1))
+PA.tab <- table(size.pair$PA)
+PA.pal <- terrain.colors(length(PA.tab))
+PA.col <- PA.pal[match(size.pair$PA, names(PA.tab))]
 plot(size ~ Tmin, data = size.pair, pch = "", xlim = c(-15, 25), 
      xlab = "Tmin (Degrees Celcius)", 
      ylab = "Genome Assembly Size (Mb)")
 text(size.pair[, "Tmin"], size.pair[, "size"], 
      labels = sapply(rownames(size.pair), get_names), 
-     cex = 0.75)
+     cex = 1.00, col = PA.col)
+legend("topright", 
+       legend = paste(signif(as.numeric(names(PA.tab)[seq(1, length(PA.tab), length = 5)]), 2), "mm"), 
+       cex = 0.85, col = PA.pal[seq(1, length(PA.tab), length = 5)], box.lwd = 0.5, pch = 15, 
+       title = "Annual Precip.")
 abline(lm(size ~ Tmin, data = size.pair))
 dev.off()
 
 ### Table: size ~ biogeo
 xtab.perm.size <- xtable::xtable(perm.size$aov.tab,
-               caption = "PerMANOVA pseudo-F table for the analysis of the factors 
-correlated with ant genome size similarity.",
+               caption = "PerMANOVA pseudo-F table for the analysis of the relationship between climate variables and ant assembly size similarity.",
                label = "tab:perm_size")
 print(xtab.perm.size,
       type = "latex",
