@@ -194,13 +194,25 @@ cyto.gs <- cyto.avg[names(cyto.avg) %in% names(ncbi.gs)]
 ncbi.gs <- ncbi.gs[names(ncbi.gs) %in% names(cyto.avg)]
 
 ## Examine the correlation between assembly length and genome size
-summary(lm(cyto.gs~ ncbi.gs))
+cooks.xtab <- xtable::xtable(summary(aov(cyto.gs~ ncbi.gs)), caption = "F-table for the initial regression of genus level assembly size and flow cytometry genome size used in the leave-one-out Cook's distance based outlier detection analysis.", digits = 3, label = "tab:wc_apg_vec")
+print(cooks.xtab,
+      type = "latex",
+      file = "../results/cooks_ftab.tex",
+      include.rownames = TRUE,
+      include.colnames = TRUE
+)
+
+
 ## Check for outliers
-plot(cooks.distance(lm(cyto.gs~ ncbi.gs)))
+pdf(file = "../results/cooks_outlier_test.pdf")
+plot(cooks.distance(lm(cyto.gs~ ncbi.gs)), pch = "", 
+     xlab = "Genome Genus", ylab = "Cook's Distance", xaxt = "n")
+text(cooks.distance(lm(cyto.gs~ ncbi.gs)), labels = names(cyto.gs))
 abline(h = mean(cooks.distance(lm(cyto.gs~ ncbi.gs))) * 4, lty = 2, col = "red")
-abline(h = mean(cooks.distance(lm(cyto.gs~ ncbi.gs))) * 3, lty = 2, col = "black")
+dev.off()
+
 ## Remove Dinoponera quadriceps due to the large discrepancy between size and length
-no.dino.cyto.ncbi <- lm(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))])
+no.dino.cyto.ncbi <- aov(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))])
 plot(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))], 
      xlab = "Genus Average NCBI Assembly Length", ylab = "Genus Average Flow Cytometry")
 abline(no.dino.cyto.ncbi)
@@ -655,7 +667,7 @@ rownames(napg.vec.tab) <- c("Longitude","Latitude", bio.labs)
 colnames(napg.vec.tab) <- c("r", "p-value")
 napg.vec.tab <- napg.vec.tab[order(napg.vec.tab[,"p-value"]),]
 
-vec.xtab <- xtable(vec.tab, caption = "Results of the NMS ordination vector analysis.", digits = 3, label = "tab:wc_vec")
+vec.xtab <- xtable::xtable(vec.tab, caption = "Results of the NMS ordination vector analysis.", digits = 3, label = "tab:wc_vec")
 print(vec.xtab,
       type = "latex",
       file = "../results/worldclim_vectors.tex",
@@ -663,7 +675,7 @@ print(vec.xtab,
       include.rownames = TRUE,
       include.colnames = TRUE
 )
-apg.vec.xtab <- xtable(apg.vec.tab, caption = "Results of the NMS ordination vector analysis for only Aphaenogaster spp.", digits = 3, label = "tab:wc_apg_vec")
+apg.vec.xtab <- xtable::xtable(apg.vec.tab, caption = "Results of the NMS ordination vector analysis for only Aphaenogaster spp.", digits = 3, label = "tab:wc_apg_vec")
 print(apg.vec.xtab,
       type = "latex",
       file = "../results/worldclim_apg_vectors.tex",
@@ -671,7 +683,7 @@ print(apg.vec.xtab,
       include.rownames = TRUE,
       include.colnames = TRUE
 )
-napg.vec.xtab <- xtable(napg.vec.tab, caption = "Results of the NMS ordination vector analysis for all whole genome sequences present in NCBI prior to the current sequencing effort.", digits = 3, label = "tab:wc_napg_vec")
+napg.vec.xtab <- xtable::xtable(napg.vec.tab, caption = "Results of the NMS ordination vector analysis for all whole genome sequences present in NCBI prior to the current sequencing effort.", digits = 3, label = "tab:wc_napg_vec")
 print(napg.vec.xtab,
       type = "latex",
       file = "../results/worldclim_napg_vectors.tex",
@@ -682,7 +694,7 @@ print(napg.vec.xtab,
 
 ### Table of climate from all from worldclim.
 wc.xtab.cap <- paste0("Sequenced ant genome biogeographic (location and climate) data from the WorldClim database accessed on ", format(Sys.time(), "%d %B %Y"), ".")
-wc.all.xtab <- xtable(clim.df, 
+wc.all.xtab <- xtable::xtable(clim.df, 
                       caption = wc.xtab.cap, 
                       digits = 3, label = "tab:wc_all")
 print(wc.all.xtab,
@@ -863,7 +875,7 @@ if (make.stats.table){
 ### Write to csv
     write.csv(table.stats,"../data/apg_summary.csv")
 ### Write latex
-    xtab <- xtable(table.stats, align = c("l",">{\\itshape}l",rep('l',(ncol(table.stats)-1))))
+    xtab <- xtable::xtable(table.stats, align = c("l",">{\\itshape}l",rep('l',(ncol(table.stats)-1))))
     names(xtab) <- c("Species" , "Percent Removed" , "GC Content" , "Contigs" , "ContigN50" , "Total Contig Length" , "Total Gap Length" , "Captured Gaps" , "Max Gap Length" , "Scaffolds" , "Scaffold N50" , "Total Scaffold Length")
     capture.output(xtab,file = "../docs/manuscript/seq_info_tab.tex")
     size.xlim <- range(as.numeric(c((
@@ -1071,7 +1083,7 @@ results.sim.size <- capture.output(
     ecodist::mantel(size.d ~ all.mash.d + all.gd, nperm = 10000),
     set.seed(1981), 
     print("size.d ~ wc.d + all.gd", quote  = FALSE),
-    ecodist::mantel(size.d ~ wc.d + all.gd, nperm = 10000),
+    ecodist::mantel(size.d ~ wc.d + all.gd + all.mash.d, nperm = 10000),
     set.seed(1981), 
     print("all.mash.d ~ wc.d + all.gd + size.d", quote  = FALSE),
     ecodist::mantel(all.mash.d ~ wc.d + all.gd + size.d, nperm = 10000),
@@ -1673,12 +1685,8 @@ plot(hclust(mor.d))
 
 ### Use MASH distance
 mrank <- TRUE
-ecodist::mantel(all.mash.d ~ size.d, nperm = 50000, mrank = mrank)
-ecodist::mantel(all.mash.d ~ wc.d + all.gd, nperm = 50000, mrank = mrank)
-
-ecodist::mantel(size.d ~ wc.d * all.mash.d, nperm = 50000, mrank = mrank)
-ecodist::mantel(size.d ~ wc.d * all.mash.d * all.gd, nperm = 50000, mrank = mrank)
-
+ecodist::mantel(size.d ~ all.mash.d, nperm = 50000, mrank = mrank)
+ecodist::mantel(size.d ~ wc.d + all.gd + all.mash.d, nperm = 50000, mrank = mrank)
 
 ### Parsing relationship between climate and size
 size.pair <- cbind(size = all.size[,"size"], 
