@@ -213,9 +213,11 @@ dev.off()
 
 ## Remove Dinoponera quadriceps due to the large discrepancy between size and length
 no.dino.cyto.ncbi <- aov(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))])
+pdf("../results/assembly_cyto.pdf")
 plot(cyto.gs[!grepl("Dinopon", names(cyto.gs))] ~ ncbi.gs[!grepl("Dinopon", names(cyto.gs))], 
      xlab = "Genus Average NCBI Assembly Length", ylab = "Genus Average Flow Cytometry")
 abline(no.dino.cyto.ncbi)
+dev.off()
 
 ## source("src/apg_mash.R")
 ### Analyze the mash distnaces
@@ -1078,21 +1080,21 @@ wc.d.napg <- as.dist(as.matrix(wc.d)[ap != "Ap", ap != "Ap"])
 all.gd.napg <- as.dist(as.matrix(all.gd)[ap != "Ap", ap != "Ap"])
 
 results.sim.size <- capture.output(
-    set.seed(1981), 
+    set.seed(1981),
     print("size.d ~ all.mash.d + all.gd", quote  = FALSE),
-    ecodist::mantel(size.d ~ all.mash.d + all.gd, nperm = 10000),
-    set.seed(1981), 
+    ecodist::mantel(size.d ~ all.mash.d + all.gd, nperm = 10000, mrank = TRUE),
+    set.seed(1981),
     print("size.d ~ wc.d + all.gd", quote  = FALSE),
-    ecodist::mantel(size.d ~ wc.d + all.gd + all.mash.d, nperm = 10000),
-    set.seed(1981), 
+    ecodist::mantel(size.d ~ wc.d + all.gd + all.mash.d, nperm = 10000, mrank = TRUE),
+    set.seed(1981),
     print("all.mash.d ~ wc.d + all.gd + size.d", quote  = FALSE),
-    ecodist::mantel(all.mash.d ~ wc.d + all.gd + size.d, nperm = 10000),
-    set.seed(1981), 
+    ecodist::mantel(all.mash.d ~ wc.d + all.gd + size.d, nperm = 10000, mrank = TRUE),
+    set.seed(1981),
     print("size.d.napg ~ wc.d.napg + all.gd.napg", quote  = FALSE),
-    ecodist::mantel(size.d.napg ~ wc.d.napg + all.gd.napg, nperm = 10000),
-    set.seed(1981), 
+    ecodist::mantel(size.d.napg ~ wc.d.napg + all.gd.napg, nperm = 10000, mrank = TRUE),
+    set.seed(1981),
     print("all.mash.d.napg ~ wc.d.napg + all.gd.napg", quote  = FALSE),
-    ecodist::mantel(all.mash.d.napg ~ wc.d.napg + all.gd.napg, nperm = 10000)
+    ecodist::mantel(all.mash.d.napg ~ wc.d.napg + all.gd.napg, nperm = 10000, mrank = TRUE)
     )
 write.table(results.sim.size, 
             file = "../results/mantel_sim_size.txt",
@@ -1758,6 +1760,7 @@ pdf("../results/size_tmin.pdf")
 par(mfrow = c(1, 1))
 PA.tab <- table(size.pair$PA)
 PA.pal <- terrain.colors(length(PA.tab))
+PA.pal <- PA.pal[length(PA.pal):1]
 PA.col <- PA.pal[match(size.pair$PA, names(PA.tab))]
 plot(size ~ Tmin, data = size.pair, pch = "", xlim = c(-15, 25), 
      xlab = "Tmin (Degrees Celcius)", 
