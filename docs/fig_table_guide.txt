@@ -1,0 +1,21 @@
+Main Text
+1        main.tex 
+2        apGenomes.bib
+3        L164 (Fig~\ref{fig:ant_world_usa} Fig1)
+4        L205 (Fig~\ref{fig:sampling} Fig2)
+9  -> 5  L205 Table~\ref{tab:climate}       (table1.tex)
+10 -> 6  L304 Table~\ref{tab:wc_var}        (table2.tex)
+3  -> 7  L324 Fig~\ref{fig:clim_cor} Fig3
+11 -> 8  L389 Table~\ref{tab:assemblystats} (table3.tex)
+4  -> 9  L401 Fig~\ref{fig:ncbi_compare} Fig4
+6  -> 10 L435 Fig~\ref{fig:all_heat} Fig5
+7  -> 11 L495 Table~\ref{tab:perm_size}      (table4.tex)
+8  -> 12 L502 Fig~\ref{fig:size_tmin} Fig6
+
+Supplementary Materials
+
+L162 & L302 Supplementary Materials Table 1 = NCBI Genomes =     TableS1.tex
+L340 Supplementarty Materials Fig 1 = Outlier Detection =        FigS2.tex
+L506 & L614 Supplementary Materials Table 2 = No APG PerMANOVA = TableS2.tex
+
+

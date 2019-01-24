@@ -206,9 +206,12 @@ print(cooks.xtab,
 ## Check for outliers
 pdf(file = "../results/cooks_outlier_test.pdf")
 plot(cooks.distance(lm(cyto.gs~ ncbi.gs)), pch = "", 
-     xlab = "Genome Genus", ylab = "Cook's Distance", xaxt = "n")
+     xlab = "Genome Genus", ylab = "Cook's Distance", xaxt = "n", 
+     xlim = c(1, 8.5))
 text(cooks.distance(lm(cyto.gs~ ncbi.gs)), labels = names(cyto.gs))
 abline(h = mean(cooks.distance(lm(cyto.gs~ ncbi.gs))) * 4, lty = 2, col = "red")
+text(3.1, mean(cooks.distance(lm(cyto.gs~ ncbi.gs))) * 4, 
+     labels = "Outlier Threshold (Mean Cook's Distance * 4)", pos = 1, font = 3)
 dev.off()
 
 ## Remove Dinoponera quadriceps due to the large discrepancy between size and length
