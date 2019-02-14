@@ -1682,7 +1682,8 @@ clim.tab <- clim.df[grepl("Aphaenogaster", rownames(clim.df)),
                     c("Lat", "Lon", "Tmin", "Tmax", "PA")]
 colnames(clim.tab) <- c("Lat","Lon","Tmin (C)","Tmax (C)","Precip (mm)")
 clim.tab <- clim.tab[order(rownames(clim.tab)), ]
-clim.xtab <- xtable::xtable(clim.tab, caption = paste0("Climate variables for colony sample sites. Climate are 30 year normal values (1970-2000) for January minimum temperature (Tmin), July maximum temperature (Tmax) and total precipitation (Precip) ", "from the WorldClim database accessed on ", format(Sys.time(), "%d %B %Y"), "."), label = "tab:climate")
+clim.tab <- apply(clim.tab, 2, as.character)
+clim.xtab <- xtable::xtable(clim.tab, caption = paste0("Climate variables for colony sample sites. Climate are 30 year normal values (1970-2000) for January minimum temperature (Tmin), July maximum temperature (Tmax) and total precipitation (Precip) ", "from the WorldClim database accessed on ", format(Sys.time(), "%d %B %Y"), "."), label = "tab:climate", digits = 5)
 print(clim.xtab,
       type = "latex",
       file = "../results/climate.tex",
